@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_disenos/provider/sliver_show.dart';
 
 import 'package:provider/provider.dart';
 
@@ -20,25 +19,30 @@ class SliderShowCustom extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => SliverShowProvider(),
+      create: (_) => _SliverShowProvider(),
       child: Center(
-        child: Column(
-          children: [
-            if (this.dotArriba)
-              _Dots(
-                cant: slides.length,
-                colorDotFondo: colorDotFondo,
-                colorDotSeleccion: colorDotSeleccion,
-              ),
-            Expanded(child: _Slides(slides: this.slides)),
-            if (!this.dotArriba)
-              _Dots(
-                cant: slides.length,
-                colorDotFondo: colorDotFondo,
-                colorDotSeleccion: colorDotSeleccion,
-                tipoDot: tipoDot,
-              ),
-          ],
+        child: Builder(
+          builder: (BuildContext context) {
+            
+            return Column(
+              children: [
+                if (this.dotArriba)
+                  _Dots(
+                    cant: slides.length,
+                    colorDotFondo: colorDotFondo,
+                    colorDotSeleccion: colorDotSeleccion,
+                  ),
+                Expanded(child: _Slides(slides: this.slides)),
+                if (!this.dotArriba)
+                  _Dots(
+                    cant: slides.length,
+                    colorDotFondo: colorDotFondo,
+                    colorDotSeleccion: colorDotSeleccion,
+                    tipoDot: tipoDot,
+                  ),
+              ],
+            );
+          },
         ),
       ),
     );
@@ -93,7 +97,7 @@ class _Dot extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final pagina = Provider.of<SliverShowProvider>(context).pagina;
+    final pagina = Provider.of<_SliverShowProvider>(context).pagina;
     final bool seleccion = (pagina >= index - 0.5 && pagina < index + 0.5);
     return tipoDot == DotTipo.Circulo
         ? _dotCirculo(seleccion)
@@ -151,7 +155,7 @@ class _SlidesState extends State<_Slides> {
   @override
   void initState() {
     pageViewController.addListener(() {
-      Provider.of<SliverShowProvider>(context, listen: false).pagina =
+      Provider.of<_SliverShowProvider>(context, listen: false).pagina =
           pageViewController.page;
     });
     super.initState();
@@ -192,5 +196,16 @@ class _Slide extends StatelessWidget {
       width: double.infinity,
       child: slide,
     );
+  }
+}
+
+class _SliverShowProvider with ChangeNotifier {
+  double _pagina = 0;
+
+  double get pagina => this._pagina;
+
+  set pagina(double pagina) {
+    this._pagina = pagina;
+    notifyListeners();
   }
 }
