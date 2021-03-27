@@ -43,7 +43,7 @@ class __RectanguloAnimadoState extends State<_RectanguloAnimado>
         parent: controller,
         curve: Interval(0.1, 0.5, curve: Curves.easeInCubic)));
 
-    moverAbajo = Tween(begin: 0.0, end: size.height - 150).animate(
+    moverAbajo = Tween(begin: 0.0, end: size.height - 250).animate(
         CurvedAnimation(
             parent: controller,
             curve: Interval(0.0, 0.25, curve: Curves.easeInOutSine)));

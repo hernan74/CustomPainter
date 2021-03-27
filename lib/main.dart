@@ -20,7 +20,7 @@ class MyApp extends StatelessWidget {
         child: MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Custom Painter',
-        initialRoute: 'sliverShow',
+        initialRoute: '/',
         routes: {
           '/'                   : (_) => HomePage(),
           'header'              : (_) => HeaderPage(),
