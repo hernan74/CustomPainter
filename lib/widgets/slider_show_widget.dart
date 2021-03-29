@@ -23,22 +23,20 @@ class SliderShowCustom extends StatelessWidget {
       child: Center(
         child: Builder(
           builder: (BuildContext context) {
-            
+            final pageProvider = Provider.of<_SliverShowProvider>(context);
+            pageProvider.colorDotSeleccion = colorDotSeleccion;
+            pageProvider.colorDotFondo = colorDotFondo;
+            pageProvider.tipoDot = tipoDot;
             return Column(
               children: [
                 if (this.dotArriba)
                   _Dots(
                     cant: slides.length,
-                    colorDotFondo: colorDotFondo,
-                    colorDotSeleccion: colorDotSeleccion,
                   ),
                 Expanded(child: _Slides(slides: this.slides)),
                 if (!this.dotArriba)
                   _Dots(
                     cant: slides.length,
-                    colorDotFondo: colorDotFondo,
-                    colorDotSeleccion: colorDotSeleccion,
-                    tipoDot: tipoDot,
                   ),
               ],
             );
@@ -51,11 +49,8 @@ class SliderShowCustom extends StatelessWidget {
 
 class _Dots extends StatelessWidget {
   final int cant;
-  final Color colorDotSeleccion;
-  final Color colorDotFondo;
-  final DotTipo tipoDot;
-  const _Dots(
-      {this.cant, this.colorDotSeleccion, this.colorDotFondo, this.tipoDot});
+
+  const _Dots({this.cant});
 
   @override
   Widget build(BuildContext context) {
@@ -70,9 +65,6 @@ class _Dots extends StatelessWidget {
               cant,
               (index) => _Dot(
                 index: index,
-                colorDotFondo: colorDotFondo,
-                colorDotSeleccion: colorDotSeleccion,
-                tipoDot: tipoDot,
               ),
             ),
           ),
@@ -89,22 +81,21 @@ enum DotTipo {
 
 class _Dot extends StatelessWidget {
   final int index;
-  final Color colorDotSeleccion;
-  final Color colorDotFondo;
-  final DotTipo tipoDot;
-  const _Dot(
-      {this.index, this.colorDotSeleccion, this.colorDotFondo, this.tipoDot});
+  const _Dot({this.index});
 
   @override
   Widget build(BuildContext context) {
+    final pageProvider = Provider.of<_SliverShowProvider>(context);
+
     final pagina = Provider.of<_SliverShowProvider>(context).pagina;
     final bool seleccion = (pagina >= index - 0.5 && pagina < index + 0.5);
-    return tipoDot == DotTipo.Circulo
-        ? _dotCirculo(seleccion)
-        : _dotNumero(seleccion, index);
+    return pageProvider.tipoDot == DotTipo.Circulo
+        ? _dotCirculo(seleccion, context)
+        : _dotNumero(seleccion, index, context);
   }
 
-  AnimatedContainer _dotCirculo(bool seleccion) {
+  AnimatedContainer _dotCirculo(bool seleccion, BuildContext context) {
+    final pageProvider = Provider.of<_SliverShowProvider>(context);
     return AnimatedContainer(
       duration: Duration(milliseconds: 100),
       curve: Curves.decelerate,
@@ -112,12 +103,17 @@ class _Dot extends StatelessWidget {
       height: seleccion ? 14 : 12,
       margin: EdgeInsets.symmetric(horizontal: 5.0),
       decoration: BoxDecoration(
-          color: seleccion ? colorDotSeleccion : colorDotFondo,
+          color: seleccion
+              ? pageProvider.colorDotSeleccion
+              : pageProvider.colorDotFondo,
           shape: BoxShape.circle),
     );
   }
 
-  AnimatedContainer _dotNumero(bool seleccion, int index) {
+  AnimatedContainer _dotNumero(
+      bool seleccion, int index, BuildContext context) {
+    final pageProvider = Provider.of<_SliverShowProvider>(context);
+
     return AnimatedContainer(
       duration: Duration(milliseconds: 800),
       curve: Curves.decelerate,
@@ -127,13 +123,17 @@ class _Dot extends StatelessWidget {
       foregroundDecoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
           border: Border.all(
-              color: seleccion ? colorDotSeleccion : colorDotFondo,
+              color: seleccion
+                  ? pageProvider.colorDotSeleccion
+                  : pageProvider.colorDotFondo,
               width: seleccion ? 2.0 : 1.0)),
       child: Center(
           child: Text(
         index.toString(),
         style: TextStyle(
-            color: seleccion ? colorDotSeleccion : colorDotFondo,
+            color: seleccion
+                ? pageProvider.colorDotSeleccion
+                : pageProvider.colorDotFondo,
             fontWeight: seleccion ? FontWeight.bold : FontWeight.normal),
       )),
     );
@@ -201,6 +201,28 @@ class _Slide extends StatelessWidget {
 
 class _SliverShowProvider with ChangeNotifier {
   double _pagina = 0;
+
+  Color _colorDotSeleccion;
+  Color _colorDotFondo;
+  DotTipo _tipoDot;
+
+  Color get colorDotSeleccion => this._colorDotSeleccion;
+
+  set colorDotSeleccion(Color color) {
+    this._colorDotSeleccion = color;
+  }
+
+  Color get colorDotFondo => this._colorDotFondo;
+
+  set colorDotFondo(Color color) {
+    this._colorDotFondo = color;
+  }
+
+  DotTipo get tipoDot => this._tipoDot;
+
+  set tipoDot(DotTipo color) {
+    this._tipoDot = color;
+  }
 
   double get pagina => this._pagina;
 
